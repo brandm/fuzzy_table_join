@@ -31,6 +31,8 @@ import pandas as pd
 import random
 import string
 
+random.seed(2017_03_23)
+
 # * Input data for test
 _df1 = pd.DataFrame(
     [
@@ -43,6 +45,7 @@ _df2 = pd.DataFrame(
     [
         ['a2', "Bar2"],
         ['b3', "Bar3"],
+        ['b4', "Bar4"],
     ],
     columns=["Id2", "Name2"])
 
@@ -56,20 +59,31 @@ def join_fuzzy(df1, field1, df2, field2, cutoff):
     close_matches = list(df1[field1].map(
         lambda cell:
         difflib.get_close_matches(cell, df2[field2], n=9, cutoff=cutoff)))
-    closest_values = [x[0] if x else None for x in close_matches]
-    alternatives_values = [
-        x[1:] if len(x) >= 2 else None for x in close_matches]
-    random.seed(20170323)
-    closest_name = "Closest2-" + ''.join(
-        random.choice(string.ascii_letters) for _ in range(5))
-    alternatives_name = "Alt2-" + ''.join(
-        random.choice(string.ascii_letters) for _ in range(5))
-    df1_mutation = df1.copy()
-    df1_mutation[closest_name] = closest_values
-    df1_mutation[alternatives_name] = alternatives_values
+    # Enrich df1 by adding columns.
+    df1_add_cols = df1.copy()
+    # Match: Column with number of matches.
+    df1_add_cols[append_rand("Match", 0)] = [len(x) for x in close_matches]
+    # Closest: Column with closest match.
+    closest_name = append_rand("Closest", 0)
+    df1_add_cols[closest_name] = [x[0] if x else '-' for x in close_matches]
+    # Alternatives: Column with Python list of alternative matches.
+    df1_add_cols[append_rand("Alternatives", 0)] = [
+        x[1:] if len(x) >= 2 else '-' for x in close_matches]
 
-    return df1_mutation.merge(
-        df2, how='outer', left_on=closest_name, right_on=field2)
+    # Join df2 to the enriched df1 on closest match.
+    return df1_add_cols.merge(
+        df2, how='left', left_on=closest_name, right_on=field2)
+
+
+def append_rand(s, suffix_len):
+    """Return string with appendend "-" and a random suffix.
+    """
+
+    if suffix_len:
+        return s + "-" + ''.join([random.choice(string.ascii_letters)
+                                  for _ in range(suffix_len)])
+    else:
+        return s
 
 
 # * Main
