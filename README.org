@@ -1,0 +1,45 @@
+
+* File comment :noexport:
+
+- Copyright (C) 2017-2017 Michael Brand <michael.ch.brand at gmail.com>
+- Licensed under GPLv3, see http://www.gnu.org/licenses/gpl-3.0.html
+- URL: http://github.com/brandm/fuzzy_table_join
+
+* Summary
+
+Proof of concept to join tables on fuzzy strings with
+~difflib.get_close_matches~ in Python 3. For example
+
+| Id1 | CName |
+|-----+-------|
+| a1  | Foo1  |
+| b1  | Bar1  |
+
+joins with
+
+| Id2 | CName |
+|-----+-------|
+| a2  | Bar2  |
+| b2  | Foo2  |
+
+to
+
+| Id1 | CName | Id2 |
+|-----+-------+-----|
+| a1  | Foo1  | b2  |
+| b1  | Bar1  | a2  |
+
+* File config :noexport:
+
+# Do not indent "#+" for compatibility with any exporter.
+
+# For any possibly not so perfect exporter with an issue like
+# http://github.com/wallyqs/org-ruby/issues/26
+#+EXCLUDE_TAGS: noexport
+# Support the old name too.
+#+EXPORT_EXCLUDE_TAGS: noexport
+
+# Local Variables:
+#   coding: utf-8-unix
+#   fill-column: 76
+# End:
