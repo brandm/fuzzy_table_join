@@ -10,24 +10,24 @@
 Proof of concept to join tables on fuzzy strings with
 ~difflib.get_close_matches~ in Python 3. For example
 
-| Id1 | CName |
+| Id1 | Name1 |
 |-----+-------|
 | a1  | Foo1  |
 | b1  | Bar1  |
 
 joins with
 
-| Id2 | CName |
+| Id2 | Name2 |
 |-----+-------|
 | a2  | Bar2  |
 | b2  | Foo2  |
 
 to
 
-| Id1 | CName | Id2 |
-|-----+-------+-----|
-| a1  | Foo1  | b2  |
-| b1  | Bar1  | a2  |
+| Id1 | Name1 | Matched2-zENjn | Id2 | Name2 |
+|-----+-------+----------------+-----+-------|
+| a1  | Foo1  | Foo2           | b2  | Foo2  |
+| b1  | Bar1  | Bar2           | a2  | Bar2  |
 
 * File config :noexport:
 
