@@ -20,14 +20,15 @@ joins with
 | Id2 | Name2 |
 |-----+-------|
 | a2  | Bar2  |
-| b2  | Foo2  |
+| b3  | Bar3  |
 
 to
 
-| Id1 | Name1 | Matched2-zENjn | Id2 | Name2 |
-|-----+-------+----------------+-----+-------|
-| a1  | Foo1  | Foo2           | b2  | Foo2  |
-| b1  | Bar1  | Bar2           | a2  | Bar2  |
+| Id1 | Name1 | Closest2-zENjn | Alt2-veiig | Id2 | Name2 |
+|-----+-------+----------------+------------+-----+-------|
+| a1  | Foo1  | None           | None       | NaN | NaN   |
+| b1  | Bar1  | Bar3           | [Bar2]     | b3  | Bar3  |
+| NaN | NaN   | NaN            | NaN        | a2  | Bar2  |
 
 * File config :noexport:
 

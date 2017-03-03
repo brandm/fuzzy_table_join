@@ -14,12 +14,12 @@ difflib.get_close_matches in Python 3.
 #     Python live coding.
 #   - Supports Emacs Outshine mode.
 #   - TODO
-#     - [-] df1_mutation[on] seems wrong.
+#     - [X] df1_mutation[on] seems wrong.
 #       - [X] Annotate new column for closest match.
 #       - [X] join_fuzzy(df1, field1, df2, field2, cutoff)
-#       - [ ] Allow no match.
-#       - [ ] Annotate new column for alternate matches.
-#       - [ ] Annotate new column for number of matches.
+#       - [X] Allow no match.
+#       - [X] Annotate new column for alternate matches.
+#       - [X] Annotate new column for number of matches.
 #     - [ ] Balance cutoff.
 #     - [ ] O(n**2) vs. order.
 
@@ -42,22 +42,34 @@ _df1 = pd.DataFrame(
 _df2 = pd.DataFrame(
     [
         ['a2', "Bar2"],
-        ['b2', "Foo2"],
+        ['b3', "Bar3"],
     ],
     columns=["Id2", "Name2"])
 
 
 # * Functions
 def join_fuzzy(df1, field1, df2, field2, cutoff):
-    df1_mutation = df1.copy()
-    random.seed(20170323)
-    df1_matched_name = "Matched2-" + ''.join(
-        random.choice(string.ascii_letters) for _ in range(5))
-    df1_mutation[df1_matched_name] = df1_mutation[field1].map(
+    """Fuzzy join df1.field1 on df2.field2, add some columns.
+    """
+
+    # Search close matches.
+    close_matches = list(df1[field1].map(
         lambda cell:
-        difflib.get_close_matches(cell, df2[field2], n=1, cutoff=cutoff)[0])
+        difflib.get_close_matches(cell, df2[field2], n=9, cutoff=cutoff)))
+    closest_values = [x[0] if x else None for x in close_matches]
+    alternatives_values = [
+        x[1:] if len(x) >= 2 else None for x in close_matches]
+    random.seed(20170323)
+    closest_name = "Closest2-" + ''.join(
+        random.choice(string.ascii_letters) for _ in range(5))
+    alternatives_name = "Alt2-" + ''.join(
+        random.choice(string.ascii_letters) for _ in range(5))
+    df1_mutation = df1.copy()
+    df1_mutation[closest_name] = closest_values
+    df1_mutation[alternatives_name] = alternatives_values
+
     return df1_mutation.merge(
-        df2, how='outer', left_on=df1_matched_name, right_on=field2)
+        df2, how='outer', left_on=closest_name, right_on=field2)
 
 
 # * Main
